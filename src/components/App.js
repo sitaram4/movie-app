@@ -18,7 +18,8 @@ class App extends React.Component {
 
   }
   isMovieFavorite = (movie) =>{
-    const {favorites} = this.props.store.getState();
+    const {movies} = this.props.store.getState();
+    const {favorites} = movies;
     const idx = favorites.indexOf(movie);
 
     if(idx!==-1){
@@ -31,7 +32,8 @@ class App extends React.Component {
     this.props.store.dispatch(setShowFavorites(val))
   }
   render(){
-    const {list,favorites,showFavorites} = this.props.store.getState();//[] but now {list:[],favorite:[]}
+    const {movies} = this.props.store.getState();
+    const {list,favorites,showFavorites} = movies;//[] but now {list:[],favorite:[]} now it is changed as {movies:{},search:{}}
     console.log('RENDER',this.props.store.getState());
     const displayMovies = showFavorites?favorites:list
     return (
