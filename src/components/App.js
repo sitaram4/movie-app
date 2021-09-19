@@ -3,23 +3,18 @@ import {data} from '../data';
 import Navbar from './Navbar';
 import MovieCard from './MovieCard';
 import { addMoveis, setShowFavorites } from '../actions';
-import {StoreContext} from '../index'
+import {connect, StoreContext} from '../index'
 class App extends React.Component {
   componentDidMount(){
     //make api call
     //dispatch action
 
-    const {store} = this.props;
-    store.subscribe(() =>{
-      console.log('UPDATED');
-      this.forceUpdate();//not generally used will change in the future
-    });
-    store.dispatch(addMoveis(data))
-    console.log('STATE: ',store.getState())
+   
+    this.props.dispatch(addMoveis(data))
 
   }
   isMovieFavorite = (movie) =>{
-    const {movies} = this.props.store.getState();
+    const {movies} = this.props;
     const {favorites} = movies;
     const idx = favorites.indexOf(movie);
 
@@ -30,12 +25,12 @@ class App extends React.Component {
     return false;
   }
   onChangeTab =(val) =>{
-    this.props.store.dispatch(setShowFavorites(val))
+    this.props.dispatch(setShowFavorites(val))
   }
   render(){
-    const {movies,search} = this.props.store.getState();
+    const {movies,search} = this.props;
     const {list,favorites,showFavorites} = movies;//[] but now {list:[],favorite:[]} now it is changed as {movies:{},search:{}}
-    console.log('RENDER',this.props.store.getState());
+    console.log('RENDER',this.props);
     const displayMovies = showFavorites?favorites:list
 {/* {consumer expects a function}
         now how to pass store to componentDidMount and other functions??
@@ -62,7 +57,7 @@ class App extends React.Component {
           <MovieCard 
             movie={movie}
             key={`movies-${index}`} 
-            dispatch={this.props.store.dispatch}
+            dispatch={this.props.dispatch}
             isFavourite={this.isMovieFavorite(movie)}/>
         ))}
       </div>
@@ -82,4 +77,12 @@ class AppWrapper extends React.Component{
     );
   }
 }
-export default AppWrapper;
+
+function mapStateToProps(state){
+  return {
+    movies:state.movies,
+    search:state.search
+  }
+}
+const connectedAppComponent =connect(mapStateToProps)(App);
+export default connectedAppComponent;

@@ -50,6 +50,40 @@ class Provider extends React.Component {
     )
   }
 }
+
+// const connectedAppComponent =connect(callback)(App);
+export function connect(callback){
+  return function(Component){
+     class ConnectedComponent extends React.Component{
+      constructor(props){
+        super();
+        this.unsubscribe=props.store.subscribe(()=>this.forceUpdate());//to update whenever store changes
+      };
+      componentWillUnmount(){
+        this.unsubscribe();
+      }
+      render(){
+        const {store} =this.props
+        const state = store.getState();
+        const dataTobePassedAsProps = callback(state);
+            return (<Component 
+                    {...dataTobePassedAsProps} 
+                    dispatch={store.dispatch}
+                    />)
+          
+      }
+    }
+    class ConnectedComponentWrapper extends React.Component{
+      render(){
+        return(
+        <StoreContext.Consumer>
+          {(store) => <ConnectedComponent store={store}/>}
+        </StoreContext.Consumer>)
+      }
+    }
+    return ConnectedComponentWrapper;
+  }
+}
 // console.log('BEFORE STATE',store.getState());
 // store.dispatch({
 //   type:'ADD_MOVIES',
