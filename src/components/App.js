@@ -3,6 +3,7 @@ import {data} from '../data';
 import Navbar from './Navbar';
 import MovieCard from './MovieCard';
 import { addMoveis, setShowFavorites } from '../actions';
+import {StoreContext} from '../index'
 class App extends React.Component {
   componentDidMount(){
     //make api call
@@ -36,8 +37,12 @@ class App extends React.Component {
     const {list,favorites,showFavorites} = movies;//[] but now {list:[],favorite:[]} now it is changed as {movies:{},search:{}}
     console.log('RENDER',this.props.store.getState());
     const displayMovies = showFavorites?favorites:list
+
     return (
-    <div className="App">
+      <StoreContext.Consumer>
+        {(store) =>{
+          return (
+            <div className="App">
       <Navbar dispatch={this.props.store.dispatch} search = {search}/>
       <div className="main">
         <div className="tabs">
@@ -56,7 +61,11 @@ class App extends React.Component {
       </div>
       {displayMovies.length === 0 ? <div className="no-movies"> No Movies to display </div>:null}
     </div>
-    );
+          )
+        }}
+      </StoreContext.Consumer>
+    )
+    
   
   }
 }
