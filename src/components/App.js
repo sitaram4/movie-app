@@ -37,13 +37,20 @@ class App extends React.Component {
     const {list,favorites,showFavorites} = movies;//[] but now {list:[],favorite:[]} now it is changed as {movies:{},search:{}}
     console.log('RENDER',this.props.store.getState());
     const displayMovies = showFavorites?favorites:list
-
+{/* {consumer expects a function}
+        now how to pass store to componentDidMount and other functions??
+        sol: use a wrapper
+        */}
+    // return (
+    //   <StoreContext.Consumer>
+    //     {() =>{
+    //       return 
+    //     }}
+    //   </StoreContext.Consumer>
+    // )
     return (
-      <StoreContext.Consumer>
-        {(store) =>{
-          return (
-            <div className="App">
-      <Navbar dispatch={this.props.store.dispatch} search = {search}/>
+    <div className="App">
+      <Navbar search = {search}/>
       <div className="main">
         <div className="tabs">
           <div className={`tab ${showFavorites ? '' : 'active-tabs'}`} onClick={() => this.onChangeTab(false)}>Movies</div>
@@ -61,13 +68,18 @@ class App extends React.Component {
       </div>
       {displayMovies.length === 0 ? <div className="no-movies"> No Movies to display </div>:null}
     </div>
-          )
-        }}
-      </StoreContext.Consumer>
-    )
-    
+    );
   
   }
 }
 
-export default App;
+class AppWrapper extends React.Component{
+  render(){
+    return (
+      <StoreContext.Consumer>
+        {(store) => <App store={store} />}
+      </StoreContext.Consumer>
+    );
+  }
+}
+export default AppWrapper;
